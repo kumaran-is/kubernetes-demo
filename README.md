@@ -51,7 +51,7 @@ Library | Version | Notes
 
 1. Install Node v16.17.x and NPM v8.15.x
 
-1. Install Angular cli
+2. Install Angular cli
 
 ```bash
 // uninstall older version of Angular CLI
@@ -62,7 +62,7 @@ Library | Version | Notes
      ng --version
 ```
 
-1. Install minikube, refer: https://minikube.sigs.k8s.io/docs/start/
+3. Install minikube, refer: https://minikube.sigs.k8s.io/docs/start/
 
 ## Quick start
 
@@ -73,13 +73,13 @@ Library | Version | Notes
   cd demo-spa
   ```
 
-1. Install NPM
+2. Install NPM
 
   ```bash
   npm install
   ```
 
-1. Start the spa and navigate to <http://localhost:4200/>.
+3. Start the spa and navigate to <http://localhost:4200/>.
 
 ```bash
 npm run start
@@ -93,34 +93,34 @@ This command starts Angular UI application on port `4200`
 1. We run SPA on a nginx server on port `8000`  inside the container. Lets create a [custom nginx configuration](./nginx-custom.conf) which will be used by nginx docker image in step 2
 
 
-1. Write a multi-stage [docker file](./Dockerfile). Dockerfile consists of two stages:
+2. Write a multi-stage [docker file](./Dockerfile). Dockerfile consists of two stages:
 
 First stage: Create a node environment using node 16.17 base image and builds the angular application with production configuration.
 
 Second stage: Copy the dist folder from the previous stage to Nginx container and copy [custom nginx configuration](./nginx-custom.conf)inside the nginx
 
 
-1. Build docker image
+3. Build docker image
 
 ```
 docker build -t kumaranisk/spa-demo:v1 .
 ```
 
-1. Verify the created image
+4. Verify the created image
 
 ```
 docker images -a
 ```
 
-1.  Run docker image. This will start the SPA on docker container at ngnix port `8000`
+5.  Run docker image. This will start the SPA on docker container at ngnix port `8000`
 
 ```
 docker run -it -p 8000:8000 kumaranisk/spa-demo:v1
 ```
 
-1.  Launch the application by navigating to <http://localhost:8000>
+6.  Launch the application by navigating to <http://localhost:8000>
 
-1.  Stop and remove the container
+7.  Stop and remove the container
 
 ```
 docker ps -a
@@ -128,7 +128,7 @@ docker stop <container_id>
 docker rm <container_id>
 ```
 
-1. To remove container upon exit, pass argument "--rm" to docker run command
+8. To remove container upon exit, pass argument "--rm" to docker run command
 
 ```
 docker run -it -p 8000:8000 --rm kumaranisk/spa-demo:v1
@@ -143,13 +143,13 @@ docker login --username=kumaranisk
 # enter your docker hub password when prompt
 ```
 
-1. Docker push to docker registry
+2. Docker push to docker registry
 
 ```
 docker push kumaranisk/spa-demo:v1
 ```
 
-1. start the minikube
+3. start the minikube
 
 ```
 minikube start
@@ -159,14 +159,14 @@ minikube start --nodes 2 -p multinode-demo
 
 ```
 
-1. Enable `metrics-server` addon to show metrics on dashboard
+4. Enable `metrics-server` addon to show metrics on dashboard
 
 ```
 minikube addons enable metrics-server
 
 ```
 
-1. start the minikube dashboard
+5. start the minikube dashboard
 
 ```
 minikube dashboard
@@ -175,7 +175,7 @@ or
 minikube dashboard -p multinode-demo 
 ```
 
-1. check the status of the nodes
+6. check the status of the nodes
 
 ```
 minikube status
@@ -185,32 +185,32 @@ or
 minikube status -p multinode-demo
 ```
 
-1. check the config
+7. check the config
 
 ```
 kubectl config view
 ```
 
-1. check the namespace
+8. check the namespace
 
 ```
 kubectl get ns
 ```
 
-1. Get the pods of the given namespace
+9. Get the pods of the given namespace
 
 ```
 kubectl get po -n kube-system
 ```
 
-1. Get list of all the api resources
+10. Get list of all the api resources
 
 ```
 kubectl api-resources
 kubectl api-resources --namespaced=false
 ```
 
-1. Get the list of nodes
+11. Get the list of nodes
 
 ```
 kubectl get nodes
@@ -218,7 +218,7 @@ or
 kubectl get no -o wide
 ```
 
-1. Get top nodes metrics
+12. Get top nodes metrics
 
 ```
 kubectl top nodes
@@ -226,13 +226,13 @@ or
 kubectl top no -o wide
 ```
 
-1. To get details of your cluster, by running the following command:
+13. To get details of your cluster, by running the following command:
    
 ```
  kubectl cluster-info
 ```
 
-1. Optional step: Instead of pushing the docker image to docker hub, you can sync local docker registry with minikube. You need to create docker image again after firing below command.
+14. Optional step: Instead of pushing the docker image to docker hub, you can sync local docker registry with minikube. You need to create docker image again after firing below command.
 
 ```
 eval $(minikube -p minikube docker-env)
@@ -240,9 +240,9 @@ eval $(minikube -p minikube docker-env)
 eval $(minikube -p minikube docker-env --unset)
 ```
 
-1. Create a [kubernetes Deployment Pod resource](./spa-deployment.yaml). A Deployment named `demo-deployment` is created, indicated by the .metadata.name field. This name will become the basis for the ReplicaSets and Pods which are created later. You can find the sample template for Deployment file in the [official website](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+15. Create a [kubernetes Deployment Pod resource](./spa-deployment.yaml). A Deployment named `demo-deployment` is created, indicated by the .metadata.name field. This name will become the basis for the ReplicaSets and Pods which are created later. You can find the sample template for Deployment file in the [official website](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 
-1. Create the deployment by running the following command on deployment manifest file:
+16. Create the deployment by running the following command on deployment manifest file:
    
 ```
  kubectl apply -f spa-deployment.yaml
@@ -252,13 +252,13 @@ eval $(minikube -p minikube docker-env --unset)
  
 ```
 
-1. Check if the Deployment was created:
+17. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To see the Deployment rollout status:
+18. To see the Deployment rollout status:
    
 ```
  kubectl rollout status deployment/demo-deployment
@@ -266,7 +266,7 @@ eval $(minikube -p minikube docker-env --unset)
  kubectl rollout status deployment/demo-deployment-multi
 ```
 
-1. To see the history of Deployment rollout :
+19. To see the history of Deployment rollout :
    
 ```
  kubectl rollout history deployment/demo-deployment
@@ -275,19 +275,19 @@ eval $(minikube -p minikube docker-env --unset)
 ```
 
 
-1. To rollback to previous version :
+20. To rollback to previous version :
    
 ```
  kubectl rollout undo deployment/demo-deployment
 ```
 
-1. To get details of your Deployment, by running the following command:
+21. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+22. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -297,25 +297,25 @@ eval $(minikube -p minikube docker-env --unset)
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+23. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. To get list of network namspace, by running the following command:
+24. To get list of network namspace, by running the following command:
    
 ```
  ip netns list
 ```
 
-1. To get labels of your pods, by running the following command:
+25. To get labels of your pods, by running the following command:
    
 ```
  kubectl get po --show-labels
 ```
 
-1. Get application logs, by running the following command:
+26. Get application logs, by running the following command:
    
 ```
  kubectl logs <podname>
@@ -323,15 +323,15 @@ eval $(minikube -p minikube docker-env --unset)
  kubectl logs -f <podname> -c <containername>
 ```
 
-1.  Create a [kubernetes service resource](./spa-service.yaml). In Kubernetes, a Service is an abstraction which expose an application running on a set of Pods as a network service. The set of Pods targeted by a Service is usually determined by a selector label `demo`.  For example, in deployment resource we defineda set of Pods where each listens on TCP port `8000` and contains a label `demo`. You can find the sample template for service file in the [official website](https://kubernetes.io/docs/concepts/services-networking/service/)
+27.  Create a [kubernetes service resource](./spa-service.yaml). In Kubernetes, a Service is an abstraction which expose an application running on a set of Pods as a network service. The set of Pods targeted by a Service is usually determined by a selector label `demo`.  For example, in deployment resource we defineda set of Pods where each listens on TCP port `8000` and contains a label `demo`. You can find the sample template for service file in the [official website](https://kubernetes.io/docs/concepts/services-networking/service/)
 
-1. Create the service by running the following command on service manifest file:
+28. Create the service by running the following command on service manifest file:
    
 ```
  kubectl apply -f spa-service.yaml
 ```
 
-1. Check if the service was created:
+29. Check if the service was created:
    
 ```
  kubectl get svc
@@ -339,7 +339,7 @@ eval $(minikube -p minikube docker-env --unset)
  kubectl get svc -o wide
 ```
 
-1. Look at our service, to know what URL to hit, by running the following command:
+30. Look at our service, to know what URL to hit, by running the following command:
    
 ```
  minikube service list
@@ -347,25 +347,25 @@ eval $(minikube -p minikube docker-env --unset)
  minikube service list -p multinode-demo
 ```
 
-1. To get details of your services, by running the following command:
+31. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
 ```
 
-1. To get all resources created, by running the following command:
+32. To get all resources created, by running the following command:
    
 ```
  kubectl get all
 ```
 
-1. To get details of your cluster, by running the following command:
+33. To get details of your cluster, by running the following command:
    
 ```
  kubectl cluster-info
 ```
 
-1. To get node ip:
+34. To get node ip:
    
 ```
  minikube ip
@@ -375,7 +375,7 @@ eval $(minikube -p minikube docker-env --unset)
 kubectl get no -o wide
 ```
 
-1.  To launch the application:
+35.  To launch the application:
 Note: Known issue - Minikube IP not accessible: If you can't access the NodePort service webapp with `MinikubeIP:NodePort`, execute the following command:
    
 ```
@@ -386,7 +386,7 @@ Note: Known issue - Minikube IP not accessible: If you can't access the NodePort
 minikube service demo-spa-service --url 
 ```
 
-1.  To avoid running command on every Yaml file, you can run the kubectl apply command on the entire folder where they are located
+36. To avoid running command on every Yaml file, you can run the kubectl apply command on the entire folder where they are located
    
 ```
 kubectl apply -f ./k8s
@@ -404,26 +404,26 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl apply -f spa-deployment.yaml
 ```
 
-1. Check if the Deployment was created:
+2. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To see the Deployment rollout status:
+3. To see the Deployment rollout status:
    
 ```
  kubectl rollout status deployment/demo-twins-deployment
 
 ```
 
-1. To get details of your Deployment, by running the following command:
+4. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+5. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -433,19 +433,19 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+6. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service type:loadbalancer by running the following command on service manifest file:
+7. Create the service type:loadbalancer by running the following command on service manifest file:
    
 ```
  kubectl apply -f spa-load-balancer-service.yaml
 ```
 
-1. Check if the service was created:
+8. Check if the service was created:
    
 ```
  kubectl get svc
@@ -453,7 +453,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get svc -o wide
 ```
 
-1. To get details of your services, by running the following command:
+9. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
@@ -461,7 +461,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl describe service demo-loadbalancer
 ```
 
-1.  To launch the application, execute the following command:
+10.  To launch the application, execute the following command:
    
 ```
  minikube service demo-loadbalancer
@@ -481,26 +481,26 @@ Create two containers, `demo-twins-spa-container` and `test-twins-spa-container`
  kubectl apply -f spa-deployment3.yaml
 ```
 
-1. Check if the Deployment was created:
+2. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To see the Deployment rollout status:
+3. To see the Deployment rollout status:
    
 ```
  kubectl rollout status deployment/demo-twins-deployment
 
 ```
 
-1. To get details of your Deployment, by running the following command:
+4. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+5. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -510,19 +510,19 @@ Create two containers, `demo-twins-spa-container` and `test-twins-spa-container`
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+6. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service by running the following command on service manifest file:
+7. Create the service by running the following command on service manifest file:
    
 ```
  kubectl apply -f spa-service3.yaml
 ```
 
-1. Check if the service was created:
+8. Check if the service was created:
    
 ```
  kubectl get svc
@@ -530,25 +530,25 @@ Create two containers, `demo-twins-spa-container` and `test-twins-spa-container`
  kubectl get svc -o wide
 ```
 
-1. Look at our service, to know what URL to hit, by running the following command:
+9. Look at our service, to know what URL to hit, by running the following command:
    
 ```
  minikube service list
 ```
 
-1. To get details of your services, by running the following command:
+10. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
 ```
 
-1. To get details of your cluster, by running the following command:
+11. To get details of your cluster, by running the following command:
    
 ```
  kubectl cluster-info
 ```
 
-1. To get node ip:
+12. To get node ip:
    
 ```
  minikube ip
@@ -558,7 +558,7 @@ Create two containers, `demo-twins-spa-container` and `test-twins-spa-container`
 kubectl get no -o wide
 ```
 
-1.  To launch the application:
+13.  To launch the application:
 Note: Known issue - Minikube IP not accessible: If you can't access the NodePort service webapp with `MinikubeIP:NodePort`, execute the following command:
    
 ```
@@ -579,13 +579,13 @@ To access the web application through the LoadBalancer service in a Minikube clu
  cd ./k8s/mysql
 ```
 
-1. Create the configmaps for MYSQL database by running the following command:
+2. Create the configmaps for MYSQL database by running the following command:
    
 ```
  kubectl apply -f mysql-configMap.yaml
 ```
 
-1. Check if the configmaps was created:
+3. Check if the configmaps was created:
    
 ```
  kubectl get configmaps
@@ -593,7 +593,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get configmaps -o wide
 ```
 
-1. To get details of your configmaps, by running the following command:
+4. To get details of your configmaps, by running the following command:
    
 ```
  kubectl describe configmaps
@@ -601,19 +601,19 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl describe configmaps mysql-config
 ```
 
-1. Tokes/Password should be always encrypted or encoded to base64 and store it in secrets. You can encode a string value to base64 by running below command:
+5. Tokes/Password should be always encrypted or encoded to base64 and store it in secrets. You can encode a string value to base64 by running below command:
 
 ```
  echo -n 'root' | base64 
 ```
 
-1. Create the secrets for MYSQL database by running the following command:
+6. Create the secrets for MYSQL database by running the following command:
    
 ```
  kubectl apply -f mysql-secret.yaml
 ```
 
-1. Check if the secrets was created:
+7. Check if the secrets was created:
    
 ```
  kubectl get secrets
@@ -621,7 +621,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get secrets -o wide
 ```
 
-1. To get details of your secrets, by running the following command:
+8. To get details of your secrets, by running the following command:
    
 ```
  kubectl describe secrets
@@ -629,13 +629,13 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl describe secrets mysql-secret
 ```
 
-1. Create the PersistentVolumeClaim for MYSQL database by running the following command:
+9. Create the PersistentVolumeClaim for MYSQL database by running the following command:
    
 ```
  kubectl apply -f mysql-pvc.yaml
 ```
 
-1. Check if the pvc was created:
+10. Check if the pvc was created:
    
 ```
  kubectl get pvc
@@ -643,7 +643,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get pvc -o wide
 ```
 
-1. To get details of your pvc, by running the following command:
+11. To get details of your pvc, by running the following command:
    
 ```
  kubectl describe pvc
@@ -651,38 +651,38 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl describe pvc mysql-pvc
 ```
 
-1. Create the mysql database deployment by running the following command on:
+12. Create the mysql database deployment by running the following command on:
    
 ```
  kubectl apply -f mysql-deployment.yaml
 ```
 
-1. Check if the Deployment was created:
+13. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To see the Deployment rollout status:
+14. To see the Deployment rollout status:
    
 ```
  kubectl rollout status deployment/mysql-deployment
 ```
 
-1. To see the history of Deployment rollout :
+15. To see the history of Deployment rollout :
    
 ```
  kubectl rollout history deployment/mysql-deployment
 ```
 
 
-1. To get details of your Deployment, by running the following command:
+16. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deploy mysql-deployment
 ```
 
-1. To see the pods created, by running the following command:
+17. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -692,19 +692,19 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+18. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service for MYSQL database by running the following command:
+19. Create the service for MYSQL database by running the following command:
    
 ```
  kubectl apply -f mysql-service.yaml
 ```
 
-1. Check if the service was created:
+20. Check if the service was created:
    
 ```
  kubectl get svc
@@ -712,7 +712,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl get svc -o wide
 ```
 
-1. To get details of your services, by running the following command:
+21. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
@@ -720,14 +720,14 @@ To access the web application through the LoadBalancer service in a Minikube clu
  kubectl describe service mysql-service
 ```
 
-1. To verify database instance, go to pod by running the following command:
+22. To verify database instance, go to pod by running the following command:
    
 ```
  kubectl exec -it <podname> /bin/bash
 
 ```
 
-1. Login to MYSQL by running the following command:
+23. Login to MYSQL by running the following command:
    
 ```
  mysql -h mysql -u root -p
@@ -735,7 +735,7 @@ To access the web application through the LoadBalancer service in a Minikube clu
 ```
 Note: It will prompt for password, enter database password
 
-1. Verify the database name by running the following command:
+24. Verify the database name by running the following command:
    
 ```
  show database
@@ -778,13 +778,13 @@ kubectl apply -f spa-deployment.yaml
 kubectl apply -f spa-deployment-canary.yaml
 ```
 
-1. To get details of your Deployment, by running the following command:
+2. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+3. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -794,19 +794,19 @@ kubectl apply -f spa-deployment-canary.yaml
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+4. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service type `NodePort` by running the following command :
+5. Create the service type `NodePort` by running the following command :
    
 ```
  kubectl apply -f spa-service-canary.yaml
 ```
 
-1. Check if the service was created:
+6. Check if the service was created:
    
 ```
  kubectl get svc
@@ -814,7 +814,7 @@ kubectl apply -f spa-deployment-canary.yaml
  kubectl get svc -o wide
 ```
 
-1.  To launch the application:
+7.  To launch the application:
 Note: Known issue - Minikube IP not accessible: If you can't access the NodePort service webapp with `MinikubeIP:NodePort`, execute the following command:
    
 ```
@@ -843,13 +843,13 @@ kubectl apply -f spa-deployment-a.yaml
 kubectl apply -f spa-deployment-b.yaml
 ```
 
-1. To get details of your Deployment, by running the following command:
+2. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+3. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -859,19 +859,19 @@ kubectl apply -f spa-deployment-b.yaml
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+4. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service type `NodePort` by running the following command :
+5. Create the service type `NodePort` by running the following command :
    
 ```
  kubectl apply -f spa-service-ab.yaml
 ```
 
-1. Check if the service was created:
+6. Check if the service was created:
    
 ```
  kubectl get svc
@@ -879,7 +879,7 @@ kubectl apply -f spa-deployment-b.yaml
  kubectl get svc -o wide
 ```
 
-1.  To launch the application:
+7.  To launch the application:
 Note: Known issue - Minikube IP not accessible: If you can't access the NodePort service webapp with `MinikubeIP:NodePort`, execute the following command:
    
 ```
@@ -910,13 +910,13 @@ kubectl apply -f spa-deployment-blue.yaml
 kubectl apply -f spa-deployment-green.yaml
 ```
 
-1. To get details of your Deployment, by running the following command:
+2. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+3. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -926,19 +926,19 @@ kubectl apply -f spa-deployment-green.yaml
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+4. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service type `NodePort` by running the following command :
+5. Create the service type `NodePort` by running the following command :
    
 ```
  kubectl apply -f spa-service-blue-green.yaml
 ```
 
-1. Check if the service was created:
+6. Check if the service was created:
    
 ```
  kubectl get svc
@@ -946,7 +946,7 @@ kubectl apply -f spa-deployment-green.yaml
  kubectl get svc -o wide
 ```
 
-1.  To launch the application:
+7.  To launch the application:
 Note: Known issue - Minikube IP not accessible: If you can't access the NodePort service webapp with `MinikubeIP:NodePort`, execute the following command:
    
 ```
@@ -973,26 +973,26 @@ Minikube comes with already built-in Ingress Controller - kubernete's[ingress-ng
  minikube addons enable ingress
 ```
 
-1. start the ingress controller, by running the following command:
+2. start the ingress controller, by running the following command:
    
 ```
  minikube tunnel
 ```
 
-1. Create the deployment by running the following command on deployment manifest file:
+3. Create the deployment by running the following command on deployment manifest file:
    
 ```
  kubectl apply -f spa-deployment.yaml
  kubectl apply -f spa-deployment2.yaml
 ```
 
-1. To get details of your Deployment, by running the following command:
+4. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+5. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -1002,20 +1002,20 @@ Minikube comes with already built-in Ingress Controller - kubernete's[ingress-ng
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+6. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Create the service type `ClusterIP` by running the following command :
+7. Create the service type `ClusterIP` by running the following command :
    
 ```
  kubectl apply -f spa-service-clusterip.yaml
  kubectl apply -f spa-service-clusterip2.yaml
 ```
 
-1. Check if the service was created:
+8. Check if the service was created:
    
 ```
  kubectl get svc
@@ -1023,13 +1023,13 @@ Minikube comes with already built-in Ingress Controller - kubernete's[ingress-ng
  kubectl get svc -o wide
 ```
 
-1. Create the ingress service by running the following command:
+9. Create the ingress service by running the following command:
    
 ```
  kubectl apply -f spa-service-ingress.yaml
 ```
 
-1. Check if the ingress was created:
+10. Check if the ingress was created:
    
 ```
  kubectl get ingress
@@ -1037,13 +1037,13 @@ Minikube comes with already built-in Ingress Controller - kubernete's[ingress-ng
  kubectl get ingress -o wide
 ```
 
-1. To get details of your ingress, by running the following command:
+11. To get details of your ingress, by running the following command:
    
 ```
  kubectl describe ingress
 ```
 
-1. Open the URL in a web browser `http://demo.k8s.com` or `http://test.k8s.com`:
+12. Open the URL in a web browser `http://demo.k8s.com` or `http://test.k8s.com`:
 
 ### Deploy using Helm Chart 
 
@@ -1071,41 +1071,41 @@ Make sure you have Helm CLI and minikube set up on your local machine.
  brew install helm
 ```
 
-1. Create a new Helm chart by running the following command:
+2. Create a new Helm chart by running the following command:
    
 ```
  helm create demochart
 ```
 
-1. Replace the contents of the `demochart/templates/deployment.yaml` with kubernetes deployment manifest [./k8s/spa-deployment.yaml](./k8s/spa-deployment.yaml) and `demochart/templates/service.yaml` with kubernetes service type:Loadbalancer manifest [./k8s/spa-load-balancer-service.yaml](./k8s/spa-load-balancer-service.yaml).
+3. Replace the contents of the `demochart/templates/deployment.yaml` with kubernetes deployment manifest [./k8s/spa-deployment.yaml](./k8s/spa-deployment.yaml) and `demochart/templates/service.yaml` with kubernetes service type:Loadbalancer manifest [./k8s/spa-load-balancer-service.yaml](./k8s/spa-load-balancer-service.yaml).
 
-1. Delete the folder  `demochart/templates/test`, file ``demochart/templates/NOTES.tx`.
+4. Delete the folder  `demochart/templates/test`, file ``demochart/templates/NOTES.tx`.
    
-1. Package the chart by running the following command:
+5. Package the chart by running the following command:
    
 ```
  helm package demochart
 ```
 
-1. Install the chart by running the following command:
+6. Install the chart by running the following command:
    
 ```
  helm install demochart-0.1.0.tgz  --generate-name
 ```
 
-1. Check if the Deployment was created:
+7. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To get details of your Deployment, by running the following command:
+8. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+9. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -1115,13 +1115,13 @@ Make sure you have Helm CLI and minikube set up on your local machine.
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+10. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Check if the service was created:
+11. Check if the service was created:
    
 ```
  kubectl get svc
@@ -1129,7 +1129,7 @@ Make sure you have Helm CLI and minikube set up on your local machine.
  kubectl get svc -o wide
 ```
 
-1. To get details of your services, by running the following command:
+12. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
@@ -1137,7 +1137,7 @@ Make sure you have Helm CLI and minikube set up on your local machine.
  kubectl describe service demo-loadbalancer
 ```
 
-1.  To launch the application, execute the following command:
+13.  To launch the application, execute the following command:
    
 ```
  minikube service demo-loadbalancer
@@ -1147,7 +1147,7 @@ Make sure you have Helm CLI and minikube set up on your local machine.
 minikube service demo-loadbalancer --url 
 ```
 
-1.  To remove the kubernetes resources created from a Helm release, run the following command:
+15.  To remove the kubernetes resources created from a Helm release, run the following command:
    
 ```
 helm uninstall <release_name>
@@ -1174,49 +1174,49 @@ Make sure you have Terraform ClI and minikube set up on your local machine.
  brew install hashicorp/tap/terraform
 ```
 
-1. Verify the Terraform installation by running the following command:
+2. Verify the Terraform installation by running the following command:
    
 ```
  terraform -help
 ```
 
-1. Initialize Terraform: Once Terraform is installed, navigate to the directory `terraform` where your Terraform code[./terraform/deployment-loadbalancer.tf](./terraform/deployment-loadbalancer.tf) is located and run the following command. This command downloads the necessary plugins and initializes the Terraform environment.
+3. Initialize Terraform: Once Terraform is installed, navigate to the directory `terraform` where your Terraform code[./terraform/deployment-loadbalancer.tf](./terraform/deployment-loadbalancer.tf) is located and run the following command. This command downloads the necessary plugins and initializes the Terraform environment.
    
 ```
  terraform init
 ```
 
-1. Validate the Terraform code: Before making any changes to your infrastructure, you should validate your Terraform code. You can do this by running the following command.
+4. Validate the Terraform code: Before making any changes to your infrastructure, you should validate your Terraform code. You can do this by running the following command.
    
 ```
  terraform validate
 ```
 
-1. Plan the changes: The next step is to plan the changes Terraform will make to your infrastructure. To do this, run the following command. This command will show you the changes Terraform will make before you apply them. Review the changes to make sure they are what you expect.
+5. Plan the changes: The next step is to plan the changes Terraform will make to your infrastructure. To do this, run the following command. This command will show you the changes Terraform will make before you apply them. Review the changes to make sure they are what you expect.
    
 ```
  terraform plan
 ```
 
-1. Apply the changes: To apply the changes, run the following command. This command will execute the changes and create the specified Kubernetes resources.
+6. Apply the changes: To apply the changes, run the following command. This command will execute the changes and create the specified Kubernetes resources.
    
 ```
  terraform apply
 ```
 
-1. Check if the Deployment was created:
+7. Check if the Deployment was created:
    
 ```
  kubectl get deployments
 ```
 
-1. To get details of your Deployment, by running the following command:
+8. To get details of your Deployment, by running the following command:
    
 ```
  kubectl describe deployments
 ```
 
-1. To see the pods created, by running the following command:
+9. To see the pods created, by running the following command:
    
 ```
  kubectl get pods -A # get all pods from all the namespace
@@ -1226,13 +1226,13 @@ Make sure you have Terraform ClI and minikube set up on your local machine.
  kubectl get po -o wide
 ```
 
-1. To get details of your pods, by running the following command:
+10. To get details of your pods, by running the following command:
    
 ```
  kubectl describe po
 ```
 
-1. Check if the service was created:
+11. Check if the service was created:
    
 ```
  kubectl get svc
@@ -1240,7 +1240,7 @@ Make sure you have Terraform ClI and minikube set up on your local machine.
  kubectl get svc -o wide
 ```
 
-1. To get details of your services, by running the following command:
+12. To get details of your services, by running the following command:
    
 ```
  kubectl describe services
@@ -1248,7 +1248,7 @@ Make sure you have Terraform ClI and minikube set up on your local machine.
  kubectl describe service demo-loadbalancer
 ```
 
-1.  To launch the application, execute the following command:
+13.  To launch the application, execute the following command:
    
 ```
  minikube service demo-loadbalancer
@@ -1258,7 +1258,7 @@ Make sure you have Terraform ClI and minikube set up on your local machine.
 minikube service demo-loadbalancer --url 
 ```
 
-1.  To remove the kubernetes resources created by Terraform, run the following command.
+14.  To remove the kubernetes resources created by Terraform, run the following command.
    Note: You may be prompted to enter "yes" to confirm the changes before Terraform applies them.
 ```
 terraform destroy
@@ -1294,13 +1294,13 @@ or
 kubectl delete deployment demo-deployment-multi
 ```
 
-1. Remove the service resource
+2. Remove the service resource
 
 ```
 kubectl delete service demo-spa-service
 ```
 
-1. Remove the pod
+3. Remove the pod
 
 ```
 kubectl -n my-namespace get pods
@@ -1312,7 +1312,7 @@ or
 kubectl delete po <Name>
 ```
 
-1. Stop the minikube
+4. Stop the minikube
 
 ```
 minikube stop
@@ -1320,13 +1320,13 @@ or
 minikube stop -p multinode-demo
 ```
 
-1. To create standalone pod
+5. To create standalone pod
 
 ```
 kubectl create -f spa-pod.yml
 ```
 
-1. Verify standalone pod
+6. Verify standalone pod
 
 ```
 kubectl get po -o wide
@@ -1340,11 +1340,11 @@ Some common use cases for namespaces in Kubernetes include:
 
 1. **Environment Isolation:** Namespaces can be used to isolate different environments, such as development, testing, and production, within the same cluster. This helps to ensure that resources in one environment do not interfere with resources in another environment.
 
-1. **Multi-Tenancy:** Namespaces can be used to provide separate environments for different teams or users, so that each team or user can have their own resources and network policies.
+2. **Multi-Tenancy:** Namespaces can be used to provide separate environments for different teams or users, so that each team or user can have their own resources and network policies.
 
-1. **Resource Management:** Namespaces can be used to group resources together for easier management and resource quota enforcement.
+3. **Resource Management:** Namespaces can be used to group resources together for easier management and resource quota enforcement.
 
-1. **Security:** Namespaces can be used to enforce access controls and security policies for different resources in the cluster.
+4. **Security:** Namespaces can be used to enforce access controls and security policies for different resources in the cluster.
 
 By using namespaces, you can create multiple isolated environments within a single cluster, which can help to improve the organization, management, and security of your resources.
 
@@ -1360,13 +1360,13 @@ or
 kubectl create namespace stage
 ```
 
-1. Create a deployment with Namspace by running the following command:
+2. Create a deployment with Namspace by running the following command:
    
 ```
  kubectl --namespace=production apply -f spa-deployment.yaml
 ```
 
-1. Create a service with Namspace by running the following command:
+3. Create a service with Namspace by running the following command:
    
 ```
  kubectl --namespace=production apply -f spa-service.yaml
@@ -1382,7 +1382,7 @@ To make sure that your YAML Kubernetes objects are defined correctly and are fol
  curl https://get.datree.io | /bin/bash
 ```
 
-1. Run Datree by running the following command:
+2. Run Datree by running the following command:
    
 ```
  datree test spa-deployment.yaml
@@ -1500,13 +1500,13 @@ Here are some benefits of using DaemonSet:
 
 1. **Node Affinity:** DaemonSets can be used to specify the nodes on which a pod should run, so you can choose to run specific daemons on specific nodes.
 
-1. **Automatic Scaling:** DaemonSets automatically scale to match the number of nodes in a cluster. As new nodes are added to the cluster, the DaemonSet creates a new pod on the node, and if a node is removed from the cluster, the pod is terminated.
+2. **Automatic Scaling:** DaemonSets automatically scale to match the number of nodes in a cluster. As new nodes are added to the cluster, the DaemonSet creates a new pod on the node, and if a node is removed from the cluster, the pod is terminated.
 
-1. **High Availability:** DaemonSets ensure that a pod is running on all nodes, providing high availability for the services that the pod provides.
+3. **High Availability:** DaemonSets ensure that a pod is running on all nodes, providing high availability for the services that the pod provides.
 
-1. **Resource Utilization:** DaemonSets can be used to optimize resource utilization, as the pods run only on the nodes that need them, rather than on all nodes in the cluster.
+4. **Resource Utilization:** DaemonSets can be used to optimize resource utilization, as the pods run only on the nodes that need them, rather than on all nodes in the cluster.
 
-1. **Easy Maintenance:** DaemonSets simplify maintenance tasks by allowing you to run a pod on all nodes, making it easier to manage and upgrade the pod.
+5. **Easy Maintenance:** DaemonSets simplify maintenance tasks by allowing you to run a pod on all nodes, making it easier to manage and upgrade the pod.
    
 In conclusion, DaemonSets are a powerful and flexible way to run daemon processes in a Kubernetes cluster, and provide several benefits for cluster management, scalability, and availability.
 
@@ -1522,13 +1522,13 @@ Here are some benefits of using StatefulSets:
 
 1. **Stable Network Identity:** StatefulSets provide each pod with a stable hostname and network identity, allowing stateful applications to locate and communicate with each other.
 
-1. **Persistent Storage:** StatefulSets automatically provide each pod with persistent storage, so that data is not lost when a pod is rescheduled or restarted.
+2. **Persistent Storage:** StatefulSets automatically provide each pod with persistent storage, so that data is not lost when a pod is rescheduled or restarted.
 
-1. **Scalability:** StatefulSets allow you to easily scale your stateful application, by increasing or decreasing the number of replicas in the set.
+3. **Scalability:** StatefulSets allow you to easily scale your stateful application, by increasing or decreasing the number of replicas in the set.
 
-1. **Ordered Deployment and Scaling:** StatefulSets provide a guaranteed order for pod creation and deletion, ensuring that your stateful application can be deployed and scaled in a controlled manner.
+4. **Ordered Deployment and Scaling:** StatefulSets provide a guaranteed order for pod creation and deletion, ensuring that your stateful application can be deployed and scaled in a controlled manner.
 
-1. **Custom Resource Management:** StatefulSets provide fine-grained control over resource management, allowing you to specify resource requirements for each pod in the set.
+5. **Custom Resource Management:** StatefulSets provide fine-grained control over resource management, allowing you to specify resource requirements for each pod in the set.
 
 In conclusion, StatefulSets are an important tool for running stateful applications in a Kubernetes cluster, providing stable network identities, persistent storage, and controlled scaling. By using StatefulSets, you can ensure that your stateful applications run reliably and with the resources they need to perform their tasks.
 
@@ -1548,13 +1548,13 @@ Kubernetes probes offer several benefits that help ensure the reliability and av
 
 1. **Improved Application Availability:** By using probes to monitor the health of containers, Kubernetes can take proactive measures to restart containers that are failing or stop routing traffic to containers that are not ready to serve requests. This helps to ensure that your applications are always available and running optimally.
 
-1. **Increased Resilience:** Probes help to detect and resolve issues with containers quickly, before they escalate into more serious problems. By restarting failing containers or stopping traffic to containers that are not ready, probes help to increase the overall resilience of your applications.
+2. **Increased Resilience:** Probes help to detect and resolve issues with containers quickly, before they escalate into more serious problems. By restarting failing containers or stopping traffic to containers that are not ready, probes help to increase the overall resilience of your applications.
 
-1. **Better Resource Utilization:** Probes can help to prevent overloading of resources by ensuring that containers are only serving traffic when they are actually ready. This helps to improve resource utilization and avoid waste.
+3. **Better Resource Utilization:** Probes can help to prevent overloading of resources by ensuring that containers are only serving traffic when they are actually ready. This helps to improve resource utilization and avoid waste.
 
-1. **Automated Monitoring:** Probes can be configured to run automatically, so you do not have to manually monitor the health of your containers. This helps to reduce the overhead of managing and monitoring your applications, freeing up time and resources to focus on other important tasks.
+4. **Automated Monitoring:** Probes can be configured to run automatically, so you do not have to manually monitor the health of your containers. This helps to reduce the overhead of managing and monitoring your applications, freeing up time and resources to focus on other important tasks.
 
-1. **Improved Observability:** Probes provide a clear view into the health of your containers and applications, making it easier to identify and troubleshoot issues. This helps to improve the observability of your applications and increase their overall reliability.
+5. **Improved Observability:** Probes provide a clear view into the health of your containers and applications, making it easier to identify and troubleshoot issues. This helps to improve the observability of your applications and increase their overall reliability.
 
 ### Namespace
 
@@ -1564,11 +1564,11 @@ Some common use cases for namespaces in Kubernetes include:
 
 1. **Environment Isolation:** Namespaces can be used to isolate different environments, such as development, testing, and production, within the same cluster. This helps to ensure that resources in one environment do not interfere with resources in another environment.
 
-1. **Multi-Tenancy:** Namespaces can be used to provide separate environments for different teams or users, so that each team or user can have their own resources and network policies.
+2. **Multi-Tenancy:** Namespaces can be used to provide separate environments for different teams or users, so that each team or user can have their own resources and network policies.
 
-1. **Resource Management:** Namespaces can be used to group resources together for easier management and resource quota enforcement.
+3. **Resource Management:** Namespaces can be used to group resources together for easier management and resource quota enforcement.
 
-1. **Security:** Namespaces can be used to enforce access controls and security policies for different resources in the cluster.
+4. **Security:** Namespaces can be used to enforce access controls and security policies for different resources in the cluster.
 
 By using namespaces, you can create multiple isolated environments within a single cluster, which can help to improve the organization, management, and security of your resources.
 
