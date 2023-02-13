@@ -1,0 +1,7 @@
+apiVersion: ambassador/v0
+kind: Mapping
+metadata:
+  name: my-microservice-mapping
+spec:
+  prefix: /api/my-microservice/
+  service: my-microservice.default.svc.cluster.local

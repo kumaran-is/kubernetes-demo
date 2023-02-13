@@ -1,0 +1,13 @@
+#This example creates a job named "example-job" that runs a single container based on the latest version of the nginx image. The template section specifies the pod template that will be used to run the task. In this case, the job will run a single container based on the nginx image. The restartPolicy field is set to OnFailure, which means that the job will not be restarted if it succeeds. The backoffLimit field is set to 4, which means that the job will be automatically retried up to 4 times if it fails. If the job fails 4 times, it will not be retried again and will remain in a failed state until it is manually deleted or reset.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: example-container
+        image: nginx:latest
+      restartPolicy: OnFailure
+  backoffLimit: 4

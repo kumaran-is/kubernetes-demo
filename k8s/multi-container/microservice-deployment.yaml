@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-microservice-deployment
+spec:
+  selector:
+    matchLabels:
+      app: my-microservice-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-microservice-app
+  spec:
+    containers:
+    - name: my-microservice
+      image: my-microservice-image:latest
+      ports:
+      - containerPort: 8100
+    terminationGracePeriodSeconds: 1
+    restartPolicy: Always

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  labels:
+    app: mysql
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce  #This specifies the mode of the claim that we are trying to create.
+  resources:
+    requests:
+      storage: 1Gi #This will tell kubernetes about the amount of space we are trying to claim.

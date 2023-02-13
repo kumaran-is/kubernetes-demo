@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Pod # Kubernetes pod kind we are creating standalone pod
+metadata:
+  name: demo-pod
+  creationTimestamp: null
+  labels:
+    app: demo
+spec:
+  containers:
+    - name: demo-pod-container
+      image: kumaranisk/spa-demo:v1 # Image that will be used to containers in the cluster
+      #It is a good practice to declare resource requests and limits for both memory and cpu for each container.
+      #This helps to schedule the container to a node that has available resources for your Pod,
+      #and also so that your Pod does not use resources that other Pods needs
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "512Mi"
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+      imagePullPolicy: Always
+      ports:
+      - containerPort: 8000 # The port that the container is running on in the cluster
+        name: demo-pod-port # you can reference these names in the targetPort attribute of a Service

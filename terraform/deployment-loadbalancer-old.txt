@@ -1,0 +1,57 @@
+provider "kubernetes" {
+  config_path = var.kubeconfig_path
+}
+
+locals {
+  deployment_name = "demo-deployment"
+  service_name = "demo-loadbalancer"
+}
+
+module "deployment" {
+  source = "terraform-kubernetes-modules/deployment/kustomize"
+
+  name = local.deployment_name
+  namespace = "default"
+  replicas = 3
+  rolling_max_surge = "25%"
+  rolling_max_unavailable = "25%"
+  selector_match_labels = {
+    "app" = "demo"
+  }
+  container_image = "kumaranisk/spa-demo:v1"
+  container_port = 8000
+  container_cpu_limit = "1"
+  container_memory_limit = "200Mi"
+  container_cpu_request = "500m"
+  container_memory_request = "100Mi"
+  liveness_probe_port = 8000
+  liveness_probe_initial_delay_seconds = 5
+  liveness_probe_timeout_seconds = 5
+  liveness_probe_success_threshold = 1
+  liveness_probe_failure_threshold = 3
+  liveness_probe_period_seconds = 10
+  readiness_probe_path = "/"
+  readiness_probe_port = 8000
+  readiness_probe_initial_delay_seconds = 5
+  readiness_probe_timeout_seconds = 2
+  readiness_probe_success_threshold = 1
+  readiness_probe_failure_threshold = 3
+  readiness_probe_period_seconds = 10
+  image_pull_policy = "Always"
+  termination_grace_period_seconds = 1
+  restart_policy = "Always"
+}
+
+module "service" {
+  source = "terraform-kubernetes-modules/service/kustomize"
+
+  name = local.service_name
+  namespace = "default"
+  type = "LoadBalancer"
+  selector = {
+    "app" = "demo"
+  }
+  port = 8002
+  target_port = 8000
+  protocol = "TCP"
+}

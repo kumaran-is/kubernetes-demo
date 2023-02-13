@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service # Kubernetes resource kind we are creating
+metadata:
+  name: demo-spa-ab-service
+  namespace: default
+  labels:
+    service-label-key: demo-spa-ab-service-label
+spec:
+  # type: ClusterIP
+  type: NodePort # type of service
+  ports:
+  - name: demo-ab-service-port
+    protocol: TCP
+    port: 80 # The port exposed ouside the cluster by service
+    targetPort: 8000 # Port exposed by Pod
+    nodePort: 31000 # Optional: By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+  selector:
+    app: demo # pod with label demo say to which Pods this Service provide access
+
+

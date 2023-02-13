@@ -1,0 +1,69 @@
+# Define the chart repository
+repositories:
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com/
+
+# Define the chart release
+releases:
+- name: demo-app
+  namespace: default
+  chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+  values:
+    deployment:
+      name: demo-deployment
+      replicas: 3
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+      selector:
+        matchLabels:
+          app: demo
+      template:
+        labels:
+          app: demo
+        spec:
+          containers:
+            - name: demo-spa-container
+              image: kumaranisk/spa-demo:v1
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: "200Mi"
+                requests:
+                  cpu: "500m"
+                  memory: "100Mi"
+              livenessProbe:
+                tcpSocket:
+                  port: 8000
+                initialDelaySeconds: 5
+                timeoutSeconds: 5
+                successThreshold: 1
+                failureThreshold: 3
+                periodSeconds: 10
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 8000
+                initialDelaySeconds: 5
+                timeoutSeconds: 2
+                successThreshold: 1
+                failureThreshold: 3
+                periodSeconds: 10
+              imagePullPolicy: Always
+              ports:
+                - containerPort: 8000
+                  name: demo-spa-port
+          terminationGracePeriodSeconds: 1
+          restartPolicy: Always
+    service:
+      name: demo-loadbalancer
+      type: LoadBalancer
+      ports:
+        - name: demo-loadbalancer-port
+          port: 8002
+          targetPort: 8000
+          protocol: TCP
+      selector:
+        app: demo

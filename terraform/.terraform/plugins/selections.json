@@ -1,0 +1,6 @@
+{
+  "registry.terraform.io/hashicorp/kubernetes": {
+    "hash": "h1:p2sgF62c2svJSKuImL3/zq/SSPOZFyd4Vj7K0UF2VrQ=",
+    "version": "2.17.0"
+  }
+}

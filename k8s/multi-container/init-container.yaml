@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-init-deployment
+spec:
+  selector:
+    matchLabels:
+      app: my-init-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-init-app
+    spec:
+      initContainers:
+      - name: init-container
+        image: my-init-image:latest
+        command: ["/bin/sh", "-c", "./init-script.sh"]
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+      containers:
+      - name: my-microservice
+        image: my-microservice-image:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+      volumes:
+      - name: data-volume
+        emptyDir: {}

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: my-ambassador-deployment
+spec:
+  selector:
+    matchLabels:
+      app: my-ambassador-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-ambassador-app
+  spec:
+    containers:
+    - name: ambassador
+      image: quay.io/datawire/ambassador:0.44.0
+      ports:
+      - containerPort: 80
+      env:
+      - name: AMBASSADOR_CONFIG
+        value: |
+          ---
+          apiVersion: ambassador/v0
+          kind:  Mapping
+          name: my-microservice-mapping
+          prefix: /my-microservice/
+          service: my-microservice.default.svc.cluster.local

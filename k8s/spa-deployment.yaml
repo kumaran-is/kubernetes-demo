@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: demo-deployment
+  namespace: default
+  creationTimestamp: null
+  labels:
+    app: demo
+spec:
+  replicas: 3 # Number of replicas that will be created for this deployment
+  strategy:
+    type: RollingUpdate # default deployment strategy, there are other strategy like recreate
+    rollingUpdate:
+      maxSurge: 25% # maximum how many new pods to be created at a given time during rolling update
+      maxUnavailable: 25% # maximum how many old pods should be taken out at a given time during rolling update
+  selector:
+    matchLabels:
+      app: demo # indicates which Pods (with which labeles) need be handled by this Deployment
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: demo
+    spec:   # defines a running container inside the Pod
+      containers:
+        - name: demo-spa-container
+          image: kumaranisk/spa-demo:v1 # Image that will be used to containers in the cluster
+          #It is a good practice to declare resource requests and limits for both memory and cpu for each container.
+          #This helps to schedule the container to a node that has available resources for your Pod,
+          #and also so that your Pod does not use resources that other Pods needs
+          resources:
+            limits:
+              cpu: "1"
+              memory: "200Mi"
+            requests:
+              cpu: "500m"
+              memory: "100Mi"
+          livenessProbe: #kubelet should check to ensure that the pod is alive
+            tcpSocket:
+              port: 8000
+            #httpGet:
+            #  path: /
+            #  port: 8000
+            initialDelaySeconds: 5 # specifies how long the kubelet should wait after the pod starts, before performing the first probe
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe: #kubelet should check to ensure that the pod is ready to take traffic
+            httpGet: # kubelet should try a HTTP request on the root of the web server on port 8000.
+              path: /
+              port: 8000
+            initialDelaySeconds: 5 # specifies how long the kubelet should wait after the pod ready, before performing the first probe
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10 #specifies how often the kubelet should perform a liveness probe.
+          #args: ["--cpu", "2"]
+          imagePullPolicy: Always
+          # imagePullPolicy: Never # if you are using local docker registry, not using docker registry like docker hub
+          ports:
+          - containerPort: 8000 # The port of the container exposed to the pod
+            name: demo-spa-port # you can reference these names in the targetPort attribute of a Service
+      terminationGracePeriodSeconds: 1
+      restartPolicy: Always

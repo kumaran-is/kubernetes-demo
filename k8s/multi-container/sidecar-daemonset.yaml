@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+spec:
+  selector:
+    matchLabels:
+      app: fluentd
+  template:
+    metadata:
+      labels:
+        app: fluentd
+    spec:
+      containers:
+      - name: fluentd
+        image: fluent/fluentd:latest
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        env:
+        - name: FLUENT_ELASTICSEARCH_HOST
+          value: "elasticsearch.my-logging-system.com"
+        - name: FLUENT_ELASTICSEARCH_PORT
+          value: "9200"
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log

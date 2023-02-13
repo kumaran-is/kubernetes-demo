@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-loadbalancer
+  labels:
+    service-label-key: demo-loadbalancer-label
+spec:
+  type: LoadBalancer
+  ports:
+  - name: demo-loadbalancer-port
+    port: 8002
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: demo # pod with label demo
+

@@ -1,0 +1,18 @@
+#This example creates a cron job named "example-cron-job" that runs a single container based on the latest version of the nginx image. The cron job runs at midnight every day, as specified by the schedule field. The jobTemplate section specifies the job template that will be used to run the task. In this case, the job will run a single container based on the nginx image. The restartPolicy field is set to OnFailure, which means that the job will not be restarted if it succeeds. The concurrencyPolicy field is set to Forbid, which means that multiple runs of the job are not allowed to overlap. The successfulJobsHistoryLimit field is set to 3, which means that the three most recent successful runs of the job will be kept for reference. The failedJobsHistoryLimit field is set to 1, which means that the most recent failed run of the job will be kept for reference.
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: example-cron-job
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: example-container
+            image: nginx:latest
+          restartPolicy: OnFailure
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1

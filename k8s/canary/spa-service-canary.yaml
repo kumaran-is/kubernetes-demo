@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service # Kubernetes resource kind we are creating
+metadata:
+  name: demo-spa-canary-service
+  namespace: default
+  labels:
+    service-label-key: demo-spa-canary-service-label
+spec:
+  type: ClusterIP
+  ports:
+  - name: demo-canary-service-port
+    protocol: TCP
+    port: 8001 # The port exposed ouside the cluster by service
+    targetPort: 8000 # Port exposed by Pod
+  selector:
+    app: demo # pod with label demo say to which Pods this Service provide access
+    version: canary
+
+

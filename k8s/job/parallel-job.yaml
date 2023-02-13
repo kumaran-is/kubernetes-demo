@@ -1,0 +1,14 @@
+#This example creates a job named "example-parallel-job" that runs 5 instances of a single container based on the latest version of the nginx image in parallel. The template section specifies the pod template that will be used to run the task. In this case, the job will run 5 instances of a single container based on the nginx image. The restartPolicy field is set to OnFailure, which means that the job will not be restarted if it succeeds. The parallelism field is set to 5, which means that the job will run 5 instances of the container in parallel. The completions field is set to 10, which means that the job will run until 10 instances of the container have completed successfully. Once 10 instances have completed successfully, the job will be marked as complete and will not run again.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-parallel-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: example-container
+        image: nginx:latest
+      restartPolicy: OnFailure
+  parallelism: 5
+  completions: 10
