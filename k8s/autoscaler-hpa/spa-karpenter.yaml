@@ -1,0 +1,13 @@
+# This YAML file creates a Karpenter scaling policy that scales the my-app deployment between 2 and 10 replicas, with a concurrency limit of 10. The policy uses the Kubernetes provider and enables cluster autoscaling.
+apiVersion: autoscaling.karpenter.sh/v1alpha1
+kind: ScalingPolicy
+metadata:
+  name: demo-scaling-policy
+spec:
+  concurrency: 10
+  minReplicas: 2
+  maxReplicas: 10
+  scaler:
+    provider: kubernetes
+    clusterAutoscaler:
+      enabled: true

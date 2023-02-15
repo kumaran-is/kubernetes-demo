@@ -1,0 +1,20 @@
+#This YAML file creates a ClusterIP service that selects the demo deployment using the app: demo label selector and exposes it on port 80. The service can be used by other pods within the Kubernetes cluster to communicate with the demo deployment.
+
+apiVersion: v1
+kind: Service # Kubernetes resource kind we are creating
+metadata:
+  name: demo-spa-service
+  namespace: default
+  labels:
+    service-label-key: demo-spa-service-label
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+    - name: https
+      port: 443
+      targetPort: 8000
+  selector:
+    app: demo
+
