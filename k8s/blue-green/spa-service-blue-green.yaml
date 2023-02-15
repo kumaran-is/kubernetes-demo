@@ -13,7 +13,6 @@ spec:
     protocol: TCP
     port: 80 # The port exposed ouside the cluster by service
     targetPort: 8000 # Port exposed by Pod
-    nodePort: 31000 # Optional: By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
   selector:
     app: demo # pod with label demo say to which Pods this Service provide access
 
