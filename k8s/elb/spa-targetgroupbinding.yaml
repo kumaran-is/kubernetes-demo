@@ -1,0 +1,9 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: demo-tgb
+spec:
+  serviceRef:
+    name: demo-spa-service
+    port: 80
+  targetGroupARN: arn:aws:elasticloadbalancing:eu-central-1:122978488699:targetgroup/k8s-default-nginx-312e592dd8/9dbc9d71f92f9328

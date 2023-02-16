@@ -1,0 +1,27 @@
+#This YAML file creates an ingress resource that routes traffic to the demo-spa-service service, which in turn routes traffic to the demo deployment. The ingress resource includes annotations for the AWS Load Balancer Controller to create an internet-facing load balancer with HTTP and HTTPS listeners. You can customize this YAML file to match your specific needs, including adding TLS certificates for HTTPS traffic.
+#Note that the spa-ingress resource we created earlier is used to expose the service to the public internet using an AWS Load Balancer, while this spa-service-service resource is used to expose the service within the Kubernetes cluster.
+apiVersion: networking.k8s.io/v1
+kind: Ingress # Kubernetes resource kind we are creating
+metadata:
+  name: spa-ingress
+  namespace: default
+  labels:
+    service-label-key: spa-ingress-label
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: demo-alb
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'  
+spec:
+  rules:
+  - host: demo.k8s.com
+    http:
+      paths:
+      - path: /*
+        pathType: Prefix
+        backend:
+          service:
+            name: demo-spa-ab-service
+            port:
+              number: 8000

@@ -1,18 +1,17 @@
 apiVersion: v1
 kind: Service # Kubernetes resource kind we are creating
 metadata:
-  name: demo-spa-ab-service
+  name: demo-spa-service
   namespace: default
   labels:
-    service-label-key: demo-spa-ab-service-label
+    service-label-key: demo-spa-service-label
 spec:
-  # type: ClusterIP
   ports:
-  - name: demo-ab-service-port
+  - name: demo-service-port
     protocol: TCP
     port: 80 # The port exposed ouside the cluster by service
     targetPort: 8000 # Port exposed by Pod
-    selector:
+  selector:
     app: demo # pod with label demo say to which Pods this Service provide access
 
 

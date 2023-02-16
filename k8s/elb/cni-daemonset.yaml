@@ -1,0 +1,60 @@
+#In this example, the aws-node DaemonSet is created in the kube-system namespace, and it runs a container that uses the amazon/amazon-k8s-cni:v1.9.2 image. The AWS_REGION environment variable is set to the AWS region in which your Kubernetes cluster is running. Other environment variables can also be set as needed.
+#The hostNetwork field is set to true to allow the AWS CNI container to use the host network namespace. This is necessary for the AWS CNI to configure the network interfaces on the worker nodes.
+
+After creating the YAML manifest file, you can apply it to your cluster using the following command:
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: aws-node
+  namespace: kube-system
+  labels:
+    k8s-app: aws-node
+spec:
+  selector:
+    matchLabels:
+      name: aws-node
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: aws-node
+    spec:
+      serviceAccountName: aws-node
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: aws-node
+        image: amazon/amazon-k8s-cni:v1.9.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: AWS_REGION
+          value: <YOUR_AWS_REGION>
+        - name: AWS_VPC_K8S_CNI_EXTERNALSNAT
+          value: "true"
+        - name: AWS_VPC_K8S_CNI_LOGLEVEL
+          value: DEBUG
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: cni-bin-dir
+          mountPath: /host/opt/cni/bin
+        - name: cni-net-dir
+          mountPath: /host/etc/cni/net.d
+        - name: xtables-lock
+          mountPath: /run/xtables.lock
+        - name: lib-modules
+          mountPath: /lib/modules
+      volumes:
+      - name: cni-bin-dir
+        hostPath:
+          path: /opt/cni/bin
+      - name: cni-net-dir
+        hostPath:
+          path: /etc/cni/net.d
+      - name: xtables-lock
+        hostPath:
+          path: /run/xtables.lock
+      - name: lib-modules
+        hostPath:
+          path: /lib/modules
