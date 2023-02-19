@@ -1,0 +1,19 @@
+#virtual route in App Mesh to route traffic from the gateway to the microservice
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualRoute
+metadata:
+  name: my-virtual-route
+  namespace: my-app
+spec:
+  route:
+    httpRoute:
+      action:
+        weightedTargets:
+        - virtualNode: my-microservice
+          weight: 100
+  match:
+    http:
+      prefix: "/"
+  virtualGateway:
+    virtualGatewayRef:
+      name: my-gateway

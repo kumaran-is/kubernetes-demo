@@ -1,0 +1,77 @@
+#Create a Kubernetes deployment for your microservice, including the App Mesh sidecar container:
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: demo-deployment
+  namespace: my-app
+  creationTimestamp: null
+  labels:
+    app: demo-microservice
+spec:
+  replicas: 3 # Number of replicas that will be created for this deployment
+  strategy:
+    type: RollingUpdate # default deployment strategy, there are other strategy like recreate
+    rollingUpdate:
+      maxSurge: 25% # maximum how many new pods to be created at a given time during rolling update
+      maxUnavailable: 25% # maximum how many old pods should be taken out at a given time during rolling update
+  selector:
+    matchLabels:
+      app: demo-microservice # indicates which Pods (with which labeles) need be handled by this Deployment
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: demo-microservice
+    spec:   # defines a running container inside the Pod
+      containers:
+        - name: demo-microservice-container
+          image: kumaranisk/api-demo:v1 # Image that will be used to containers in the cluster
+          #It is a good practice to declare resource requests and limits for both memory and cpu for each container.
+          #This helps to schedule the container to a node that has available resources for your Pod,
+          #and also so that your Pod does not use resources that other Pods needs
+          resources:
+            limits:
+              cpu: "1"
+              memory: "200Mi"
+            requests:
+              cpu: "500m"
+              memory: "100Mi"
+          livenessProbe: #kubelet should check to ensure that the pod is alive
+            tcpSocket:
+              port: 8000
+            #httpGet:
+            #  path: /
+            #  port: 8000
+            initialDelaySeconds: 5 # specifies how long the kubelet should wait after the pod starts, before performing the first probe
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe: #kubelet should check to ensure that the pod is ready to take traffic
+            httpGet: # kubelet should try a HTTP request on the root of the web server on port 8000.
+              path: /
+              port: 8000
+            initialDelaySeconds: 5 # specifies how long the kubelet should wait after the pod ready, before performing the first probe
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10 #specifies how often the kubelet should perform a liveness probe.
+          #args: ["--cpu", "2"]
+          imagePullPolicy: Always
+          # imagePullPolicy: Never # if you are using local docker registry, not using docker registry like docker hub
+          ports:
+          - containerPort: 8000 # The port of the container exposed to the pod
+            name: demo-microservice-port # you can reference these names in the targetPort attribute of a Service
+          - name: envoy
+            image: public.ecr.aws/appmesh/appmesh-envoy:v1.19.3.0-prod
+            ports:
+            - containerPort: 9901
+            env:
+            - name: APPMESH_VIRTUAL_NODE_NAME
+              value: "mesh/my-mesh/virtualNode/demo-microservice"
+            - name: AWS_REGION
+              value: "us-west-2"
+            - name: ENABLE_ENVOY_STATS_TAGS
+              value: "1"
+      terminationGracePeriodSeconds: 1
+      restartPolicy: Always

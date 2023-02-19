@@ -1,0 +1,32 @@
+# Karpenter provision manifest file that provisions multiple instance types, capacity types, availability zones, and architectures on Amazon Web Services (AWS):
+apiVersion: provisioning.karpenter.sh/v1alpha1
+kind: Provisioner
+metadata:
+  name: aws-test-node-group
+  namespace: default
+spec:
+  provider: aws
+  constraints:
+    - zone: us-east-1a
+      instanceTypes:
+        - t3.small
+        - t3.medium
+      capacityTypes:
+        - ON_DEMAND
+        - SPOT
+      architectures:
+        - amd64
+        - arm64
+    - zone: us-east-1b
+      instanceTypes:
+        - t3.micro
+        - t3.large
+      capacityTypes:
+        - ON_DEMAND
+      architectures:
+        - amd64
+  labels:
+    node-group: test-group
+  ttlSecondsAfterEmpty: 300
+  min: 2
+  max: 10

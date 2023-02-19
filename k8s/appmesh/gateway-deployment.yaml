@@ -1,0 +1,43 @@
+#Create a Kubernetes deployment for your microservice, including the App Mesh sidecar container:
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: my-gateway
+  namespace: my-app
+  creationTimestamp: null
+spec:
+  replicas: 2 # Number of replicas that will be created for this deployment
+  strategy:
+    type: RollingUpdate # default deployment strategy, there are other strategy like recreate
+    rollingUpdate:
+      maxSurge: 25% # maximum how many new pods to be created at a given time during rolling update
+      maxUnavailable: 25% # maximum how many old pods should be taken out at a given time during rolling update
+  selector:
+    matchLabels:
+      app: my-gateway # indicates which Pods (with which labeles) need be handled by this Deployment
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-gateway
+    spec:   # defines a running container inside the Pod
+      containers:
+      - name: envoy
+        resources:
+            limits:
+              cpu: "1"
+              memory: "200Mi"
+            requests:
+              cpu: "500m"
+              memory: "100Mi"
+        image: public.ecr.aws/appmesh/appmesh-envoy:v1.19.3.0-prod
+        ports:
+        - containerPort: 9901
+        env:
+        - name: APPMESH_VIRTUAL_NODE_NAME
+          value: "mesh/my-mesh/virtualNode/demo-microservice"
+        - name: AWS_REGION
+          value: "us-west-2"
+        - name: ENABLE_ENVOY_STATS_TAGS
+          value: "1"
+

@@ -1,0 +1,17 @@
+#virtual node in App Mesh to represent your microservice
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualNode
+metadata:
+  name: my-virtual-node
+  namespace: my-app
+spec:
+  serviceDiscovery:
+    dns:
+      hostname: my-microservice.my-app.svc.cluster.local
+  backends:
+  - virtualService:
+      virtualServiceName: my-virtual-service
+  listeners:
+  - portMapping:
+      port: 80
+      protocol: http

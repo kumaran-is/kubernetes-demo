@@ -1,0 +1,37 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualService
+metadata:
+  name: my-virtual-service
+  namespace: my-app
+spec:
+  meshName: my-mesh
+  spec:
+    provider:
+      virtualRouter:
+        virtualRouterRef:
+          name: my-virtual-router
+          namespace: my-app
+    virtualRouter:
+      name: my-virtual-router
+      listeners:
+        - portMapping:
+            port: 8080
+            protocol: http
+          healthCheck:
+            protocol: http
+            path: /ping
+            timeoutMillis: 2000
+            intervalMillis: 10000
+            healthyThreshold: 2
+            unhealthyThreshold: 2
+      routes:
+        - name: my-virtual-route
+          route:
+            httpRoute:
+              action:
+                weightedTargets:
+                  - virtualNode: my-microservice
+                    weight: 100
+            match:
+              http:
+                prefix: "/"

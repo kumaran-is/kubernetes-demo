@@ -1,0 +1,5 @@
+# Create a Kubernetes namespace for your application:
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-app

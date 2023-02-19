@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: appmesh-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appmesh-controller
+  namespace: appmesh-system
+  labels:
+    app: appmesh-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appmesh-controller
+  template:
+    metadata:
+      labels:
+        app: appmesh-controller
+    spec:
+      serviceAccountName: appmesh-controller
+      containers:
+        - name: appmesh-controller
+          image: public.ecr.aws/aws-appmesh/appmesh-controller:v1.2.0
+          args:
+            - server
+          env:
+            - name: AWS_REGION
+              value: <your_aws_region>
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: appmesh-controller-ecr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appmesh-controller
+  namespace: appmesh-system
+spec:
+  type: ClusterIP
+  selector:
+    app: appmesh-controller
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

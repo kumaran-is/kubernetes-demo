@@ -1,0 +1,37 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: GatewayRoute
+metadata:
+  name: my-gateway-route
+  namespace: my-app
+spec:
+  meshRef:
+    name: my-mesh
+  spec:
+    httpRoute:
+      action:
+        target:
+          virtualService:
+            virtualServiceRef:
+              name: my-virtual-service
+              namespace: my-app
+        rewrite:
+          prefix: /api
+      match:
+        prefix: /api
+  gatewayRouteName: my-gateway-route
+  gatewayRouteSpec:
+    httpRoute:
+      action:
+        target:
+          virtualService:
+            virtualServiceRef:
+              name: my-virtual-service
+              namespace: my-app
+        rewrite:
+          prefix: /api
+      match:
+        prefix: /api
+  virtualGateway:
+    virtualGatewayRef:
+      name: my-gateway
+      namespace: my-app

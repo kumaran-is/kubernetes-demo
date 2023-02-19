@@ -1,0 +1,19 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualGateway
+metadata:
+  name: my-gateway
+  namespace: my-app
+spec:
+  meshRef:
+    name: my-mesh
+  listeners:
+  - portMapping:
+      port: 8088
+      protocol: http
+    healthCheck:
+      protocol: http
+      path: /ping
+      timeoutMillis: 2000
+      intervalMillis: 10000
+      healthyThreshold: 2
+      unhealthyThreshold: 2

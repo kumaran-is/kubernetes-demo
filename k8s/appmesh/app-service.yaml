@@ -1,0 +1,18 @@
+#  Kubernetes service to expose your microservice to other parts of your application
+apiVersion: v1
+kind: Service # Kubernetes resource kind we are creating
+metadata:
+  name: demo-service
+  namespace: my-app
+  labels:
+    service-label-key: demo-service-label
+spec:
+  ports:
+  - name: demo-service-port
+    protocol: TCP
+    port: 80 # The port exposed ouside the cluster by service
+    targetPort: 8000 # Port exposed by Pod
+  selector:
+    app: demo-microservice # pod with label demo say to which Pods this Service provide access
+
+
