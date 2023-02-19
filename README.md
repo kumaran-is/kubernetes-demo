@@ -24,6 +24,12 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
     - [Cleanup](#cleanup)
     - [Namespace](#namespace)
     - [Linting Kubernetes Manifest](#linting-kubernetes-manifest)
+  - [Service Mesh](#service-mesh)
+    - [Istio](#istio)
+    - [Istio Installation](#istio-installation)
+    - [Observability Dashboard](#observability-dashboard)
+    - [Uninstall](#uninstall)
+    - [Micro-service demo from Google Cloud](#micro-service-demo-from-google-cloud)
   - [Knowledge](#knowledge)
     - [Pod vs Deployment:](#pod-vs-deployment)
     - [Pods:](#pods)
@@ -1387,6 +1393,222 @@ To make sure that your YAML Kubernetes objects are defined correctly and are fol
 ```
  datree test spa-deployment.yaml
 ```
+## Service Mesh
+
+A service mesh is a dedicated infrastructure layer for managing service-to-service communication in modern, cloud-native applications. It provides a way to manage and secure the communication between services by abstracting away the underlying network and infrastructure complexity, allowing developers to focus on their application logic.
+
+It typically consists of a set of proxy servers deployed alongside application services. These proxies intercept and route traffic between services, handling functions such as traffic management, load balancing, service discovery, and security. The proxies also provide observability into the network traffic, enabling teams to monitor and debug their applications in real-time.
+
+A service mesh also often addresses more complex operational requirements, like A/B testing, canary deployments, rate limiting, access control, encryption, and end-to-end authentication.
+
+By providing a dedicated layer for managing service-to-service communication, service meshes make it easier to build and operate complex, distributed systems.
+
+### Istio
+One of the most popular service mesh implementations is Istio, which is an open-source platform that can be deployed on Kubernetes. Other examples include Linkerd, AWS APP Mesh, and Consul Connect
+
+Istio provides a rich set of features that can be used to manage service-to-service communication, including:
+
+1. **Traffic management:** Istio can route traffic to different versions of a service, perform A/B testing, and implement canary releases.
+2. **Load balancing:** Istio can automatically distribute traffic across multiple instances of a service, providing better scalability and reliability.
+3. **Service discovery:** Istio can automatically discover and route traffic to all services in the mesh, making it easier to manage and scale microservices.
+4. **Security:** Istio provides a way to enforce authentication and authorization policies across the mesh, and can automatically encrypt traffic between services.
+5. **Observability:** Istio provides detailed metrics and logs for all traffic in the mesh, making it easier to troubleshoot and debug issues.
+
+Istio has become a popular choice for managing microservices in cloud-native applications due to its rich set of features and its ability to work seamlessly with Kubernetes.
+
+### Istio Installation
+
+Instructions outlined below are referred from [official Istio Website](https://istio.io/latest/docs/setup/getting-started/)
+
+1. Download Istio, by running the following command:
+   
+```
+ curl -L https://istio.io/downloadIstio | sh -
+```
+
+2. set path for istioctl
+   
+```
+ cd istio-1.17.0
+ export PATH=$PWD/bin:$PATH
+```
+
+3. Install istio with [Booking demo configuratio profile](https://istio.io/latest/docs/examples/bookinfo/). This example deploys a sample application composed of four separate microservices used to demonstrate various Istio features. You can different [configuration profiles here](https://istio.io/latest/docs/setup/additional-setup/config-profiles/) that suits your needs.
+
+```
+ cd istio-1.17.0
+ istioctl install --set profile=demo -y
+```
+
+4. Add a namespace label to instruct Istio to automatically inject Envoy sidecar proxies when you deploy your application later
+
+```
+ kubectl label namespace default istio-injection=enabled
+```
+
+5. Deploy the [Booking demo app](https://istio.io/latest/docs/examples/bookinfo/) that comes with [Booking demo configuratio profile](https://istio.io/latest/docs/examples/bookinfo/)
+
+```
+ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+``` 
+
+6. To get details of your Deployment, by running the following command:
+
+```
+kubectl describe deployments
+
+kubectl describe deployments details-v1
+kubectl describe deployments productpage-v1
+kubectl describe deployments ratings-v1
+kubectl describe deployments reviews-v1
+kubectl describe deployments reviews-v2
+kubectl describe deployments reviews-v3
+``` 
+
+7. To get all resources created, by running the following command:
+   
+```
+ kubectl get all
+```
+
+8. To see the pods created, by running the following command:
+   
+```
+ kubectl get pods -A # get all pods from all the namespace
+ or
+ kubectl get po
+ or
+ kubectl get po -o wide
+ or
+ kubectl get po -n istio-system
+```
+
+9. To get details of your pods, by running the following command:
+   
+```
+ kubectl describe po
+```
+
+10. Check if the service was created:
+   
+```
+ kubectl get svc
+ or
+ kubectl get svc -o wide
+```
+
+11. To get details of your services, by running the following command:
+   
+```
+ kubectl describe services
+```
+
+12. Run the following command to see if the app is running inside the cluster and serving HTML pages by checking for the page title in the response::
+   
+```
+ kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -sS productpage:9080/productpage | grep -o "<title>.*</title>"
+```
+
+11. Istio uses Gateway to manage inbound and outbound traffic to mesh. Create Istio [Ingress Gateway](https://istio.io/latest/docs/concepts/traffic-management/#gateways) to access the application from outside, by running the following command. 
+    
+Gateway configurations are applied to standalone Envoy proxies that are running at the edge of the mesh, rather than sidecar Envoy proxies running alongside your service workloads.   
+   
+```
+ kubectl describe services
+```
+
+12.  To get details of your services, by running the following command:
+   
+```
+ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+```
+
+13. Validate the configuration, by running the following command:
+   
+```
+ istioctl analyze
+```
+
+14. Start a Minikube tunnel that sends traffic to your Istio Ingress Gateway. This will provide an external load balancer, EXTERNAL-IP, for service/istio-ingressgateway.
+   
+```
+ minikube tunnel
+```
+
+15. Set the ingress host and ports:
+   
+```
+ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+  export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+
+```
+
+16. Verify IP address and ports were successfully assigned to each environment variable.
+   
+```
+ echo "$INGRESS_HOST"
+ echo "$INGRESS_PORT"
+ echo "$SECURE_INGRESS_PORT"
+```
+
+17. Set GATEWAY_URL.
+   
+```
+ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+```
+
+18. Ensure an IP address and port were successfully assigned to the environment variable.
+   
+```
+echo "$GATEWAY_URL"
+```
+
+19. Run the following command to retrieve the external address of the Bookinfo application and launch the application on the browser.
+   
+```
+echo "http://$GATEWAY_URL/productpage"
+```
+
+### Observability Dashboard
+Use the following instructions to deploy the Kiali dashboard, along with Prometheus, Grafana, and Jaeger.
+
+The Kiali dashboard shows an overview of your mesh with the relationships between the services in the Bookinfo sample application. It also provides filters to visualize the traffic flow.
+
+1. Install Kiali and the other [addons](https://github.com/istio/istio/tree/release-1.17/samples/addons).
+   
+```
+kubectl apply -f samples/addons
+kubectl rollout status deployment/kiali -n istio-system
+```
+
+2. Launch the  Kiali dashboard [addons](https://github.com/istio/istio/tree/release-1.17/samples/addons).
+    
+```
+kubectl apply -f samples/addons
+kubectl rollout status deployment/kiali -n istio-system
+```
+
+### Uninstall
+
+1. To delete the [Bookinfo demo application and its configuratio](https://istio.io/latest/docs/examples/bookinfo/)
+
+```
+samples/bookinfo/platform/kube/cleanup.sh
+```
+
+2. Delete addons, namespace and other configurations
+
+```
+kubectl delete -f samples/addons
+istioctl uninstall -y --purge
+kubectl delete namespace istio-system
+kubectl label namespace default istio-injection-
+```
+
+### Micro-service demo from Google Cloud
+1.  There is a [demo micro-service project from google cloud](https://github.com/GoogleCloudPlatform/microservices-demo), you can install it to kubernetes cluster and use of technologies like Kubernetes/GKE, Istio, Stackdriver, and gRPC
+
 
 ## Knowledge
 
