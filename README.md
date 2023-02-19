@@ -1440,7 +1440,7 @@ Instructions outlined below are referred from [official Istio Website](https://i
  istioctl install --set profile=demo -y
 ```
 
-4. Add a namespace label to instruct Istio to automatically inject Envoy sidecar proxies when you deploy your application later
+4. Add a namespace label to instruct Istio to automatically inject Envoy sidecar proxies when you deploy your application later. This will inject proxy as initial container whenever new pod is created.
 
 ```
  kubectl label namespace default istio-injection=enabled
@@ -1571,23 +1571,44 @@ echo "http://$GATEWAY_URL/productpage"
 ```
 
 ### Observability Dashboard
-Use the following instructions to deploy the Kiali dashboard, along with Prometheus, Grafana, and Jaeger.
+[Istio can integrate with other software to provide additional functionality like Observability](https://istio.io/latest/docs/ops/integrations/). Use the following instructions to deploy the Kiali dashboard, along with Prometheus, Grafana, and Jaeger to see the data visualization of metrics,logs and tracing collected by Istio
 
 The Kiali dashboard shows an overview of your mesh with the relationships between the services in the Bookinfo sample application. It also provides filters to visualize the traffic flow.
 
 1. Install Kiali and the other [addons](https://github.com/istio/istio/tree/release-1.17/samples/addons).
    
 ```
+cd istio-1.17.0
 kubectl apply -f samples/addons
 kubectl rollout status deployment/kiali -n istio-system
 ```
 
-2. Launch the  Kiali dashboard [addons](https://github.com/istio/istio/tree/release-1.17/samples/addons).
+2. Verify the pod.
     
 ```
-kubectl apply -f samples/addons
-kubectl rollout status deployment/kiali -n istio-system
+kubectl get po -n istio-system
 ```
+
+3. Verify the service.
+    
+```
+kubectl get svc -n istio-system
+```
+
+3. Launch kiali dashboard.
+    
+```
+istioctl dashboard kiali
+```
+
+4. To trace the data, hit the productpage with 100 requests. The number of requests depends on Istio’s sampling rate and can be configured using the Telemetry API. With the default sampling rate of 1%, you need to send at least 100 requests before the first trace is visible.
+    
+```
+for i in $(seq 1 100); do curl -s -o /dev/null "http://$GATEWAY_URL/productpage"; done
+```
+
+5. Now open the Kiali dashboard, in the left navigation menu, select Graph and in the Namespace drop down, select default.
+
 
 ### Uninstall
 
@@ -1607,8 +1628,64 @@ kubectl label namespace default istio-injection-
 ```
 
 ### Micro-service demo from Google Cloud
-1.  There is a [demo micro-service project from google cloud](https://github.com/GoogleCloudPlatform/microservices-demo), you can install it to kubernetes cluster and use of technologies like Kubernetes/GKE, Istio, Stackdriver, and gRPC
+There is a [demo micro-service project from google cloud](https://github.com/GoogleCloudPlatform/microservices-demo), you can install it to kubernetes cluster and use of technologies like Kubernetes/GKE, Istio, Stackdriver, and gRPC
 
+
+1. Get the label of default name space
+
+```
+ kubectl get ns default --show-labels
+```
+
+2. Add a namespace label to instruct Istio to automatically inject Envoy sidecar proxies when you deploy your application later. This will inject proxy as initial container whenever new pod is created.
+
+```
+ kubectl label namespace default istio-injection=enabled
+```
+
+
+3. Download the [kubernetes-manifests.yaml](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml) manifest file and deploy the google demo micro-services by running the following command:
+
+```
+kubectl apply -f kubernetes-manifests.yaml
+```
+
+4. To get all resources created, by running the following command:
+   
+```
+ kubectl get all
+```
+
+5. To see the pods created, by running the following command:
+   
+```
+ kubectl get pods -A # get all pods from all the namespace
+ or
+ kubectl get po
+ or
+ kubectl get po -o wide
+```
+
+6. To get details of your pods, by running the following command:
+   
+```
+ kubectl describe po
+```
+
+7. Check if the service was created:
+   
+```
+ kubectl get svc
+ or
+ kubectl get svc -o wide
+```
+
+8. Describe one of the pod:
+   
+```
+ kubectl get po
+ kubectl describe <podname>
+```
 
 ## Knowledge
 
