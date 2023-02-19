@@ -1687,6 +1687,12 @@ kubectl apply -f kubernetes-manifests.yaml
  kubectl describe <podname>
 ```
 
+9. To delete the [Bookinfo demo application and its configuratio](https://istio.io/latest/docs/examples/bookinfo/)
+
+```
+kubectl delete -f kubernetes-manifests.yaml
+```
+
 ## Knowledge
 
 In Kubernetes we can deploy our workloads using different type of API objects like Pods, Deployment, ReplicaSet, ReplicationController and StatefulSets.
